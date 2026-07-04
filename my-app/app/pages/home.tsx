@@ -257,7 +257,6 @@ function PdfFlowAnimation() {
         </g>
       ))}
 
-      
       <rect
         x="302"
         y="146"
@@ -288,7 +287,7 @@ function PdfFlowAnimation() {
           repeatCount="indefinite"
         />
       </circle>
-     
+
       <rect
         x="312"
         y="182"
@@ -320,7 +319,6 @@ function PdfFlowAnimation() {
         AI ENGINE
       </text>
 
-      
       {[0, 1, 2].map((i) => (
         <g key={`rdot${i}`}>
           <circle r="5.5" fill={GREEN} filter="url(#dotGlow)">
@@ -436,7 +434,6 @@ function PdfFlowAnimation() {
         </g>
       ))}
 
-    
       <text
         x="46"
         y="328"
@@ -478,7 +475,6 @@ function PdfFlowAnimation() {
 }
 const MotionImage = motion(Image);
 console.log(process.env.NEXT_PUBLIC_API_URL);
-
 
 export default function Home() {
   const [isDragging, setIsDragging] = useState(false);
@@ -1073,6 +1069,289 @@ export default function Home() {
               </div>
             </motion.div>
 
+            {/* ===================== RESULTS SECTION ===================== */}
+
+            {result && (
+              <section
+                className="px-6 py-24"
+                style={{
+                  
+                  borderTop: "1px solid rgba(45,106,79,0.15)",
+                }}
+              >
+                <div className="max-w-7xl mx-auto">
+                  {/* Heading */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 25 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6 }}
+                    className="mb-12"
+                  >
+                    <h2
+                      style={{
+                        fontFamily: "'Cormorant Garamond', serif",
+                        fontSize: "3rem",
+                        fontWeight: 700,
+                        color: "#1b3a2d",
+                      }}
+                    >
+                      Extraction Results
+                    </h2>
+
+                    <p
+                      className="mt-2"
+                      style={{
+                        color: "#5a7a69",
+                        fontFamily: "'DM Sans'",
+                      }}
+                    >
+                      AI extracted the following structured information.
+                    </p>
+                  </motion.div>
+
+                  {/* ================= SUMMARY ================= */}
+
+                  <div className="grid md:grid-cols-4 gap-6 mb-12">
+                    <Card>
+                      <CardContent className="p-6">
+                        <h3 className="text-sm text-gray-500">
+                          Documents Processed
+                        </h3>
+                        <p className="text-4xl font-bold mt-2">
+                          {result.data.summary.total_documents_processed}
+                        </p>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardContent className="p-6">
+                        <h3 className="text-sm text-gray-500">
+                          Director Changes
+                        </h3>
+                        <p className="text-4xl font-bold mt-2">
+                          {result.data.summary.total_director_changes_extracted}
+                        </p>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardContent className="p-6">
+                        <h3 className="text-sm text-gray-500">
+                          Matching Documents
+                        </h3>
+                        <p className="text-4xl font-bold mt-2">
+                          {
+                            result.data.summary
+                              .director_change_documents_identified
+                          }
+                        </p>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardContent className="p-6">
+                        <h3 className="text-sm text-gray-500">
+                          Failed Documents
+                        </h3>
+                        <p className="text-4xl font-bold mt-2">
+                          {
+                            result.data.summary.documents_that_failed_processing
+                              .length
+                          }
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  {/* ================= EXTRACTIONS (detail cards) ================= */}
+
+                  <div className="space-y-8">
+                    {result.data.extractions.map((item: any, index: number) => (
+                      <Card key={index}>
+                        <CardContent className="p-8">
+                          <div className="flex justify-between items-center mb-8">
+                            <h3
+                              style={{
+                                fontFamily: "'Cormorant Garamond', serif",
+                                fontSize: "2rem",
+                                fontWeight: 600,
+                              }}
+                            >
+                              {item.company_name}
+                            </h3>
+
+                            <Badge>
+                              {item.extraction_confidence?.toUpperCase()}
+                            </Badge>
+                          </div>
+
+                          <div className="grid md:grid-cols-2 gap-6">
+                            <div>
+                              <p className="font-semibold text-gray-500">
+                                Source File
+                              </p>
+                              <p>{item.source_filename}</p>
+                            </div>
+
+                            <div>
+                              <p className="font-semibold text-gray-500">
+                                Stock Ticker
+                              </p>
+                              <p>{item.stock_ticker}</p>
+                            </div>
+
+                            <div>
+                              <p className="font-semibold text-gray-500">
+                                Director
+                              </p>
+                              <p>{item.director_name}</p>
+                            </div>
+
+                            <div>
+                              <p className="font-semibold text-gray-500">
+                                Change Type
+                              </p>
+                              <p>{item.change_type}</p>
+                            </div>
+
+                            <div>
+                              <p className="font-semibold text-gray-500">
+                                Effective Date
+                              </p>
+                              <p>{item.effective_date}</p>
+                            </div>
+                          </div>
+
+                          <div className="mt-8">
+                            <p className="font-semibold text-gray-500 mb-2">
+                              Reason Stated
+                            </p>
+                            <p className="leading-7">{item.reason_stated}</p>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+
+                  {/* ================= TABLE VIEW (replaces raw JSON) ================= */}
+
+                  <Card className="mt-16">
+                    <CardContent className="p-8">
+                      <h3
+                        className="mb-6 text-2xl font-bold"
+                        style={{
+                          fontFamily: "'Cormorant Garamond', serif",
+                          color: "#1b3a2d",
+                        }}
+                      >
+                        Summary Table
+                      </h3>
+
+                      <div
+                        className="overflow-x-auto rounded-lg"
+                        style={{ border: "1px solid rgba(45,106,79,0.15)" }}
+                      >
+                        <table className="w-full text-sm text-left">
+                          <thead>
+                            <tr style={{ backgroundColor: "#1b3a2d" }}>
+                              <th className="px-4 py-3 text-white font-semibold">
+                                Company
+                              </th>
+                              <th className="px-4 py-3 text-white font-semibold">
+                                Ticker
+                              </th>
+                              <th className="px-4 py-3 text-white font-semibold">
+                                Director
+                              </th>
+                              <th className="px-4 py-3 text-white font-semibold">
+                                Change Type
+                              </th>
+                              <th className="px-4 py-3 text-white font-semibold">
+                                Effective Date
+                              </th>
+                              <th className="px-4 py-3 text-white font-semibold">
+                                Confidence
+                              </th>
+                              <th className="px-4 py-3 text-white font-semibold">
+                                Source File
+                              </th>
+                            </tr>
+                          </thead>
+
+                          <tbody>
+                            {result.data.extractions.map(
+                              (item: any, index: number) => (
+                                <tr
+                                  key={index}
+                                  style={{
+                                    backgroundColor:
+                                      index % 2 === 0 ? "#ffffff" : "#f5f5dc",
+                                    borderTop: "1px solid rgba(45,106,79,0.1)",
+                                  }}
+                                >
+                                  <td
+                                    className="px-4 py-3 font-medium"
+                                    style={{ color: "#1b3a2d" }}
+                                  >
+                                    {item.company_name}
+                                  </td>
+                                  <td
+                                    className="px-4 py-3"
+                                    style={{ color: "#1b3a2d" }}
+                                  >
+                                    {item.stock_ticker}
+                                  </td>
+                                  <td
+                                    className="px-4 py-3"
+                                    style={{ color: "#1b3a2d" }}
+                                  >
+                                    {item.director_name}
+                                  </td>
+                                  <td
+                                    className="px-4 py-3"
+                                    style={{ color: "#1b3a2d" }}
+                                  >
+                                    {item.change_type}
+                                  </td>
+                                  <td
+                                    className="px-4 py-3"
+                                    style={{ color: "#1b3a2d" }}
+                                  >
+                                    {item.effective_date}
+                                  </td>
+                                  <td className="px-4 py-3">
+                                    <span
+                                      className="px-2 py-1 rounded text-xs font-semibold text-white"
+                                      style={{
+                                        backgroundColor:
+                                          item.extraction_confidence === "high"
+                                            ? "#2d6a4f"
+                                            : item.extraction_confidence ===
+                                                "medium"
+                                              ? "#d4a017"
+                                              : "#a13a3a",
+                                      }}
+                                    >
+                                      {item.extraction_confidence?.toUpperCase()}
+                                    </span>
+                                  </td>
+                                  <td
+                                    className="px-4 py-3 text-xs"
+                                    style={{ color: "#5a7a69" }}
+                                  >
+                                    {item.source_filename}
+                                  </td>
+                                </tr>
+                              ),
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </section>
+            )}
 
             {/* Feature cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-14 w-full">
@@ -1153,13 +1432,7 @@ export default function Home() {
               ))}
             </div>
           </div>
-           
         </section>
-         {result && (
-          <section className="p-10 bg-black text-green-400">
-            <pre>{JSON.stringify(result, null, 2)}</pre>
-          </section>
-        )}
       </main>
     </div>
   );

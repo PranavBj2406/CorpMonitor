@@ -5,7 +5,6 @@ from src.pdf_extractor import extract_text_from_pdf
 from src.classifier import extract_from_text
 from src.validator import validate_record
 
-seen_keys = set()
 
 
 def run_pipeline(
@@ -18,6 +17,10 @@ def run_pipeline(
     existing_extractions = []
     processed_files = set()
     failed_files = []
+    seen_keys = {
+    (e["source_filename"], e["director_name"])
+    for e in existing_extractions
+}
 
     if output_file and output_file.exists():
         with open(output_file, "r", encoding="utf-8") as f:

@@ -92,19 +92,26 @@ def extract_from_text(text: str, filename: str) -> list[dict]:
                 time.sleep(2)
             
             prompt = SYSTEM_PROMPT + f"\n\nFilename: {filename}\n\nDocument text:\n{text[:15000]}"
+
             
             response = client.models.generate_content(
                 model="gemini-2.5-flash",
                 contents=prompt,
                 config=types.GenerateContentConfig(
-                    temperature=0.1,
+                    temperature=0,
                     response_mime_type="application/json"
                 )
             )
             
             raw = response.text
+            print("=" * 80)
+            print(raw)
+            print("=" * 80)
             parsed = json.loads(raw)
-            return parsed.get("changes", []) if parsed.get("is_director_change") else []
+            changes = parsed.get("changes", [])
+            if changes:
+                return changes
+            return []
             
         except Exception as e:
             error_str = str(e)

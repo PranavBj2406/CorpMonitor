@@ -1,5 +1,5 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException
-
+import hashlib
 from app.services.pipeline_services import process_zip
 
 router = APIRouter()
@@ -12,6 +12,13 @@ async def extract_documents(
     """
     Upload a ZIP archive containing PDFs.
     """
+    content = await zip_file.read()
+
+    print("=" * 80)
+    print("Filename:", zip_file.filename)
+    print("Size:", len(content))
+    print("SHA256:", hashlib.sha256(content).hexdigest())
+    print("=" * 80)
 
     if not zip_file.filename:
         raise HTTPException(

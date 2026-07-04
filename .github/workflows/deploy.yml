@@ -24,8 +24,9 @@ jobs:
           script: |
             cd ~/CorpMonitor/CorpMonitor
 
-            echo "Pulling latest code..."
-            git pull origin main
+            echo "Updating repository..."
+            git fetch origin
+            git reset --hard origin/master
 
             cd server
 

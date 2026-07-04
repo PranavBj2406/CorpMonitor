@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { processDocuments } from "@/services/api";
 import Image from "next/image";
 import {
   ArrowRight,
@@ -19,7 +20,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import footer from "@/assets/footer.png";
-/* ─────────────── PDF Flow Animation ─────────────── */
+
+/* PDF Flow Animation */
+
 function PdfFlowAnimation() {
   const GREEN = "#2d6a4f";
   const GREEN_MID = "#40916c";
@@ -254,7 +257,7 @@ function PdfFlowAnimation() {
         </g>
       ))}
 
-      {/* ── CENTER: Processing box ── */}
+      
       <rect
         x="302"
         y="146"
@@ -285,7 +288,7 @@ function PdfFlowAnimation() {
           repeatCount="indefinite"
         />
       </circle>
-      {/* Label rows */}
+     
       <rect
         x="312"
         y="182"
@@ -317,7 +320,7 @@ function PdfFlowAnimation() {
         AI ENGINE
       </text>
 
-      {/* ── RIGHT: Traveling dots outward ── */}
+      
       {[0, 1, 2].map((i) => (
         <g key={`rdot${i}`}>
           <circle r="5.5" fill={GREEN} filter="url(#dotGlow)">
@@ -433,7 +436,7 @@ function PdfFlowAnimation() {
         </g>
       ))}
 
-      {/* ── Bottom labels ── */}
+    
       <text
         x="46"
         y="328"
@@ -474,12 +477,17 @@ function PdfFlowAnimation() {
   );
 }
 const MotionImage = motion(Image);
-/* ─────────────── Main Page ─────────────── */
+console.log(process.env.NEXT_PUBLIC_API_URL);
+
+
 export default function Home() {
   const [isDragging, setIsDragging] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<any>(null);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -515,6 +523,22 @@ export default function Home() {
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) validateAndSetFile(file);
+  };
+
+  const handleProcessDocuments = async () => {
+    if (!uploadedFile) return;
+
+    try {
+      setLoading(true);
+
+      const response = await processDocuments(uploadedFile);
+      console.log(response);
+      setResult(response);
+    } catch (error: any) {
+      setUploadError(error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -1025,6 +1049,8 @@ export default function Home() {
                             Clear
                           </button>
                           <button
+                            onClick={handleProcessDocuments}
+                            disabled={loading}
                             data-testid="button-process-documents"
                             className="px-5 py-2.5 rounded-lg font-semibold transition-all"
                             style={{
@@ -1037,7 +1063,7 @@ export default function Home() {
                               cursor: "pointer",
                             }}
                           >
-                            Process Documents
+                            {loading ? "Processing..." : "Process Documents"}
                           </button>
                         </div>
                       </motion.div>
@@ -1046,6 +1072,7 @@ export default function Home() {
                 </div>
               </div>
             </motion.div>
+
 
             {/* Feature cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-14 w-full">
@@ -1128,6 +1155,11 @@ export default function Home() {
           </div>
            
         </section>
+         {result && (
+          <section className="p-10 bg-black text-green-400">
+            <pre>{JSON.stringify(result, null, 2)}</pre>
+          </section>
+        )}
       </main>
     </div>
   );

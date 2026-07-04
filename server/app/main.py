@@ -9,7 +9,7 @@ app = FastAPI(
     description="Extract director appointment and resignation information from ZIP archives containing PDFs.",
     version=settings.API_VERSION,
 )
-
+# CI/CD Test
 # CORS
 app.add_middleware(
     CORSMiddleware,

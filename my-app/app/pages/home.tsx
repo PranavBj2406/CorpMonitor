@@ -652,7 +652,7 @@ export default function Home() {
                 }}
                 className="px-3 py-1"
               >
-                AI-Powered Compliance
+                Intelligent Document Extraction
               </Badge>
 
               <h1
@@ -691,10 +691,7 @@ export default function Home() {
                   lineHeight: 1.7,
                   maxWidth: "28rem",
                 }}
-              >
-                CorpMonitor tracks regulatory changes across 180+ jurisdictions
-                in real time — so your legal team never misses a filing
-                deadline.
+              >CorpMonitor extracts board director changes from corporate filings — transforming unstructured PDFs into structured, confidence-scored records for review.
               </p>
 
               <Button
